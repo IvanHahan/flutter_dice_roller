@@ -859,36 +859,41 @@ MaterialApp<br>
   <!-- SLIDE 9: Popular widgets -->
   <div class="slide" data-index="8">
     <h2>📦 Популярні віджети</h2>
-    <div class="card-grid">
-      <div class="card">
-        <div class="icon">📐</div>
-        <h4>Container</h4>
-        <p>Стилізує, прикрашає та позиціонує дочірній віджет. BoxDecoration, padding, margin.</p>
+    <div class="two-col" style="align-items:center">
+      <div class="card-grid" style="grid-template-columns:1fr 1fr">
+        <div class="card">
+          <div class="icon">📐</div>
+          <h4>Container</h4>
+          <p>Стилізує, прикрашає та позиціонує дочірній віджет. BoxDecoration, padding, margin.</p>
+        </div>
+        <div class="card">
+          <div class="icon">📊</div>
+          <h4>Column / Row</h4>
+          <p>Розташовує віджети вертикально (Column) або горизонтально (Row).</p>
+        </div>
+        <div class="card">
+          <div class="icon">📏</div>
+          <h4>Expanded</h4>
+          <p>Заповнює доступний простір у Flex-контейнері (Column, Row).</p>
+        </div>
+        <div class="card">
+          <div class="icon">🥞</div>
+          <h4>Stack + Positioned</h4>
+          <p>Розміщує віджети один на одному. Positioned керує позицією всередині Stack.</p>
+        </div>
+        <div class="card">
+          <div class="icon">🖼️</div>
+          <h4>Image</h4>
+          <p>Відображає зображення: <code>Image.asset()</code>, <code>Image.network()</code>, <code>Image.file()</code>.</p>
+        </div>
+        <div class="card">
+          <div class="icon">🔘</div>
+          <h4>FilledButton / TextButton</h4>
+          <p>Кнопки. У Material 3 <code>FilledButton</code> — основний стиль.</p>
+        </div>
       </div>
-      <div class="card">
-        <div class="icon">📊</div>
-        <h4>Column / Row</h4>
-        <p>Розташовує віджети вертикально (Column) або горизонтально (Row).</p>
-      </div>
-      <div class="card">
-        <div class="icon">📏</div>
-        <h4>Expanded</h4>
-        <p>Заповнює доступний простір у Flex-контейнері (Column, Row).</p>
-      </div>
-      <div class="card">
-        <div class="icon">🥞</div>
-        <h4>Stack + Positioned</h4>
-        <p>Розміщує віджети один на одному. Positioned керує позицією всередині Stack.</p>
-      </div>
-      <div class="card">
-        <div class="icon">🖼️</div>
-        <h4>Image</h4>
-        <p>Відображає зображення: <code>Image.asset()</code>, <code>Image.network()</code>, <code>Image.file()</code>.</p>
-      </div>
-      <div class="card">
-        <div class="icon">🔘</div>
-        <h4>FilledButton / TextButton</h4>
-        <p>Кнопки. У Material 3 <code>FilledButton</code> — основний стиль.</p>
+      <div style="text-align:center">
+        <img src="slide9_image.png" alt="Популярні віджети" style="max-width:100%;border-radius:12px;border:1px solid var(--border);box-shadow:var(--shadow)">
       </div>
     </div>
     <div class="slide-number">09 <span>/</span> 13</div>
