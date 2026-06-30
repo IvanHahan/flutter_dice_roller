@@ -13,7 +13,7 @@ class MyContainer extends StatelessWidget {
   final List<Color> gradientColors;
 
   @override
-  Widget build(context) {
+  Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(

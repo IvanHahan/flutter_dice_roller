@@ -1,16 +1,14 @@
-# flutter_application_1
+# Dice Roller
 
-A new Flutter project.
+A simple Flutter demo app built during Lecture 1. Tap the button to roll a dice and see a random face.
 
-## Getting Started
+## Topics covered
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+- Flutter / Dart project structure
+- MaterialApp, Scaffold, Center, Container, BoxDecoration
+- StatelessWidget vs StatefulWidget
+- Custom widgets and named constructors
+- Asset images
+- State management with setState
+- Gradients, colors, TextButton
+- Variables, constants (var, final, const)
