@@ -1,0 +1,1163 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Лекція 1 — Основи Flutter</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+  :root {
+    --bg: #0f0f1a;
+    --bg2: #1a1a2e;
+    --bg3: #252540;
+    --text: #e8e8f0;
+    --text2: #9898b8;
+    --accent: #54c5f8;
+    --accent2: #1389fd;
+    --flutter-blue: #54c5f8;
+    --flutter-teal: #20dac4;
+    --gradient-1: linear-gradient(135deg, #54c5f8, #1389fd);
+    --gradient-2: linear-gradient(135deg, #54c5f8, #20dac4);
+    --danger: #ff6b6b;
+    --warn: #ffd93d;
+    --success: #6bcf7f;
+    --border: #2a2a45;
+    --radius: 16px;
+    --shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
+    --font: 'Inter', -apple-system, sans-serif;
+    --mono: 'JetBrains Mono', monospace;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html {
+    scroll-behavior: smooth;
+    font-size: 16px;
+  }
+
+  body {
+    font-family: var(--font);
+    background: var(--bg);
+    color: var(--text);
+    overflow: hidden;
+    height: 100vh;
+    width: 100vw;
+  }
+
+  .presentation {
+    width: 100vw;
+    height: 100vh;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .slide {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 5rem 6rem;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.5s ease, visibility 0.5s ease, transform 0.5s ease;
+    transform: scale(0.96);
+    overflow-y: auto;
+  }
+
+  .slide.active {
+    opacity: 1;
+    visibility: visible;
+    transform: scale(1);
+    z-index: 10;
+  }
+
+  .slide.exit {
+    opacity: 0;
+    transform: scale(1.04);
+  }
+
+  /* Background decoration */
+  .slide::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -30%;
+    width: 80%;
+    height: 80%;
+    background: radial-gradient(circle, rgba(84,197,248,0.04) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .slide::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 3px;
+    background: var(--gradient-1);
+    opacity: 0;
+    transition: opacity 0.5s ease;
+  }
+
+  .slide.active::after {
+    opacity: 1;
+  }
+
+  /* Slide number */
+  .slide-number {
+    position: absolute;
+    bottom: 2rem;
+    right: 3rem;
+    font-size: 0.85rem;
+    color: var(--text2);
+    font-weight: 500;
+    letter-spacing: 0.05em;
+  }
+
+  .slide-number span {
+    color: var(--accent);
+  }
+
+  /* Typography */
+  h1 {
+    font-size: 3.5rem;
+    font-weight: 800;
+    line-height: 1.15;
+    margin-bottom: 0.75rem;
+    background: var(--gradient-1);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  h2 {
+    font-size: 2.2rem;
+    font-weight: 700;
+    margin-bottom: 1.25rem;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  h2 .badge {
+    font-size: 0.9rem;
+    font-weight: 600;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    background: var(--gradient-1);
+    -webkit-text-fill-color: white;
+    color: white;
+    letter-spacing: 0.02em;
+  }
+
+  h3 {
+    font-size: 1.3rem;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+    color: var(--accent);
+  }
+
+  p, li {
+    font-size: 1.1rem;
+    line-height: 1.7;
+    color: var(--text2);
+    max-width: 800px;
+  }
+
+  p + p { margin-top: 0.75rem; }
+
+  ul {
+    list-style: none;
+    padding: 0;
+  }
+
+  ul li {
+    padding: 0.4rem 0 0.4rem 1.75rem;
+    position: relative;
+  }
+
+  ul li::before {
+    content: '→';
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+    font-weight: 600;
+  }
+
+  ul.grid-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 0.75rem;
+  }
+
+  ul.grid-list li::before { content: '◆'; }
+
+  /* Code blocks */
+  pre {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.25rem 1.5rem;
+    overflow-x: auto;
+    font-family: var(--mono);
+    font-size: 0.9rem;
+    line-height: 1.6;
+    margin: 1rem 0;
+    position: relative;
+  }
+
+  pre .kw { color: #c792ea; }
+  pre .tp { color: #82aaff; }
+  pre .fn { color: #82aaff; }
+  pre .st { color: #c3e88d; }
+  pre .cm { color: #546e7a; font-style: italic; }
+  pre .num { color: #f78c6c; }
+  pre .op { color: #89ddff; }
+  pre .va { color: #eeffff; }
+  pre .pr { color: #f07178; }
+
+  /* Cards */
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1rem;
+    margin: 1rem 0;
+  }
+
+  .card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    transition: all 0.3s ease;
+  }
+
+  .card:hover {
+    border-color: var(--accent);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(84,197,248,0.1);
+  }
+
+  .card .icon {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .card h4 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 0.4rem;
+    color: var(--text);
+  }
+
+  .card p {
+    font-size: 0.9rem;
+    margin: 0;
+  }
+
+  /* Table */
+  .table-wrap {
+    overflow-x: auto;
+    margin: 1rem 0;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.95rem;
+  }
+
+  th {
+    background: var(--bg3);
+    color: var(--text);
+    font-weight: 600;
+    padding: 0.85rem 1rem;
+    text-align: left;
+  }
+
+  td {
+    padding: 0.75rem 1rem;
+    border-top: 1px solid var(--border);
+    color: var(--text2);
+  }
+
+  tr:hover td {
+    background: rgba(84,197,248,0.03);
+  }
+
+  /* Title slide */
+  .slide.title-slide {
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .slide.title-slide h1 {
+    font-size: 5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .slide.title-slide .subtitle {
+    font-size: 1.4rem;
+    color: var(--text2);
+    font-weight: 300;
+    margin-bottom: 2rem;
+  }
+
+  .slide.title-slide .meta {
+    display: flex;
+    gap: 2rem;
+    color: var(--text2);
+    font-size: 1rem;
+  }
+
+  .slide.title-slide .meta span {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  /* Flutter logo in title */
+  .flutter-logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+  }
+
+  .flutter-logo .dot {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+  }
+
+  .flutter-logo .dot.blue { background: #54c5f8; }
+  .flutter-logo .dot.teal { background: #20dac4; }
+
+  /* Comparison */
+  .comparison {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin: 1rem 0;
+  }
+
+  .comparison .col {
+    padding: 1.25rem 1.5rem;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+  }
+
+  .comparison .col.old {
+    background: rgba(255,107,107,0.05);
+    border-color: rgba(255,107,107,0.2);
+  }
+
+  .comparison .col.new {
+    background: rgba(107,207,127,0.05);
+    border-color: rgba(107,207,127,0.2);
+  }
+
+  .comparison .col h4 {
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+  }
+
+  .comparison .col.old h4 { color: var(--danger); }
+  .comparison .col.new h4 { color: var(--success); }
+
+  .comparison .col p, .comparison .col li {
+    font-size: 0.9rem;
+    margin: 0;
+  }
+
+  /* Update note */
+  .update-note {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background: rgba(255,217,61,0.08);
+    border: 1px solid rgba(255,217,61,0.2);
+    border-radius: 8px;
+    font-size: 0.85rem;
+    color: var(--warn);
+    margin-top: 0.75rem;
+  }
+
+  /* Two column layout */
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    align-items: start;
+  }
+
+  .two-col p, .two-col li {
+    font-size: 1rem;
+  }
+
+  /* Navigation */
+  .nav {
+    position: fixed;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    z-index: 100;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    padding: 0.5rem 1rem;
+    backdrop-filter: blur(20px);
+  }
+
+  .nav button {
+    background: none;
+    border: none;
+    color: var(--text2);
+    cursor: pointer;
+    font-size: 1.1rem;
+    padding: 0.4rem 0.6rem;
+    border-radius: 8px;
+    transition: all 0.2s;
+    font-family: var(--font);
+  }
+
+  .nav button:hover {
+    color: var(--text);
+    background: var(--bg3);
+  }
+
+  .nav .dots {
+    display: flex;
+    gap: 0.4rem;
+  }
+
+  .nav .dot-nav {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--border);
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    transition: all 0.3s;
+  }
+
+  .nav .dot-nav.active {
+    background: var(--accent);
+    width: 24px;
+    border-radius: 4px;
+  }
+
+  .nav .dot-nav:hover {
+    background: var(--text2);
+  }
+
+  .nav .slide-counter {
+    font-size: 0.8rem;
+    color: var(--text2);
+    font-weight: 500;
+    min-width: 60px;
+    text-align: center;
+  }
+
+  /* Keyboard hint */
+  .key-hint {
+    position: fixed;
+    bottom: 5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    color: var(--text2);
+    font-size: 0.8rem;
+    opacity: 0.4;
+    z-index: 50;
+    font-family: var(--font);
+  }
+
+  /* Scrollbar for slides with lots of content */
+  .slide::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  .slide::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .slide::-webkit-scrollbar-thumb {
+    background: var(--border);
+    border-radius: 2px;
+  }
+
+  /* Responsive */
+  @media (max-width: 900px) {
+    .slide { padding: 3rem 2rem; }
+    h1 { font-size: 2.2rem; }
+    h2 { font-size: 1.6rem; }
+    p, li { font-size: 1rem; }
+    .slide.title-slide h1 { font-size: 2.8rem; }
+    .two-col { grid-template-columns: 1fr; }
+    .comparison { grid-template-columns: 1fr; }
+    .card-grid { grid-template-columns: 1fr; }
+  }
+
+  @media (max-width: 600px) {
+    .slide { padding: 2rem 1.25rem; }
+    h1 { font-size: 1.8rem; }
+    h2 { font-size: 1.3rem; }
+    .slide.title-slide h1 { font-size: 2rem; }
+    .nav { gap: 0.5rem; padding: 0.4rem 0.75rem; }
+  }
+
+  /* Table for variables */
+  .var-table td:first-child {
+    font-family: var(--mono);
+    color: var(--accent);
+    font-weight: 500;
+    white-space: nowrap;
+  }
+
+  /* Architecture diagram */
+  .arch {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 1.5rem 0;
+  }
+
+  .arch .layer {
+    padding: 1rem 2.5rem;
+    border-radius: 10px;
+    font-weight: 600;
+    text-align: center;
+    min-width: 320px;
+  }
+
+  .arch .layer.framework {
+    background: linear-gradient(135deg, rgba(84,197,248,0.15), rgba(19,137,253,0.15));
+    border: 1px solid rgba(84,197,248,0.3);
+    color: var(--accent);
+  }
+
+  .arch .layer.engine {
+    background: linear-gradient(135deg, rgba(32,218,196,0.15), rgba(84,197,248,0.15));
+    border: 1px solid rgba(32,218,196,0.3);
+    color: var(--flutter-teal);
+  }
+
+  .arch .layer.embedder {
+    background: linear-gradient(135deg, rgba(107,207,127,0.15), rgba(32,218,196,0.15));
+    border: 1px solid rgba(107,207,127,0.3);
+    color: var(--success);
+  }
+
+  .arch .arrow {
+    color: var(--text2);
+    font-size: 0.8rem;
+  }
+
+  /* Widget tree */
+  .tree {
+    font-family: var(--mono);
+    font-size: 0.85rem;
+    line-height: 1.8;
+    color: var(--text2);
+  }
+
+  .tree .highlight {
+    color: var(--accent);
+  }
+
+  .note {
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    background: rgba(84,197,248,0.06);
+    border-left: 3px solid var(--accent);
+    font-size: 0.9rem;
+    color: var(--text2);
+    margin: 1rem 0;
+  }
+
+  .note.warn {
+    background: rgba(255,217,61,0.06);
+    border-left-color: var(--warn);
+  }
+
+  .note.danger {
+    background: rgba(255,107,107,0.06);
+    border-left-color: var(--danger);
+  }
+</style>
+</head>
+<body>
+
+<div class="presentation" id="presentation">
+
+  <!-- SLIDE 1: Title -->
+  <div class="slide title-slide active" data-index="0">
+    <div class="flutter-logo">
+      <span class="dot blue"></span>
+      <span class="dot teal"></span>
+    </div>
+    <h1>Лекція 1 — Основи Flutter</h1>
+    <p class="subtitle">Вступ до кросплатформної розробки з Flutter та Dart</p>
+    <div class="meta">
+      <span>📘 Іван Хаханов</span>
+      <span>🔄 2026</span>
+    </div>
+    <div class="slide-number">01 <span>/</span> 13</div>
+  </div>
+
+  <!-- SLIDE 2: What is Flutter -->
+  <div class="slide" data-index="1">
+    <h2>🤔 Що таке Flutter <span class="badge">оновлено 2026</span></h2>
+    <p>Flutter — це набір інструментів розробки програмного забезпечення <strong>від Google</strong> для створення кросплатформних додатків.</p>
+    <div class="card-grid" style="margin-top:1.25rem">
+      <div class="card">
+        <div class="icon">📱</div>
+        <h4>Мобільні</h4>
+        <p>Android, iOS</p>
+      </div>
+      <div class="card">
+        <div class="icon">💻</div>
+        <h4>Десктоп</h4>
+        <p>macOS, Windows, Linux</p>
+      </div>
+      <div class="card">
+        <div class="icon">🌐</div>
+        <h4>Веб</h4>
+        <p>CanvasKit</p>
+      </div>
+      <div class="card">
+        <div class="icon">⚡</div>
+        <h4>Рушій</h4>
+        <p>Impeller</p>
+      </div>
+    </div>
+    <p><strong>Flutter НЕ є мовою програмування.</strong> Він використовує <strong>Dart</strong> як мову програмування.</p>
+    <div class="update-note">ℹ️ Material 3 — стандартна тема оформлення з Flutter 3.16. Рушій Impeller замінив Skia на iOS (3.29) та Android (3.22+).</div>
+    <div class="slide-number">02 <span>/</span> 13</div>
+  </div>
+
+  <!-- SLIDE 3: What is Dart -->
+  <div class="slide" data-index="2">
+    <h2>🎯 Що таке Dart <span class="badge">3.x</span></h2>
+    <p>Dart — це сучасна об'єктно-орієнтована мова, яка компілюється до нативного коду (ARM/x86) або до JavaScript/WebAssembly.</p>
+    <div class="two-col">
+      <div>
+        <h3>Характеристики</h3>
+        <ul>
+          <li>Строга типізація (compile-time checked)</li>
+          <li>Sound null safety (Dart 2.12+)</li>
+          <li>AOT → нативний код; JIT → hot reload</li>
+          <li>Всі значення — об'єкти (успадковують <code>Object</code>)</li>
+        </ul>
+      </div>
+      <div>
+        <h3>Нове в Dart 3.x</h3>
+        <ul>
+          <li><strong>Records</strong> — анонімні кортежі</li>
+          <li><strong>Patterns</strong> — деструктуризація та зіставлення</li>
+          <li><strong>Sealed classes</strong> — контроль ієрархії типів</li>
+          <li><strong>Switch expressions</strong> — switch як вираз</li>
+          <li><strong>Class modifiers</strong> — <code>base</code>, <code>interface</code>, <code>mixin class</code></li>
+        </ul>
+      </div>
+    </div>
+    <pre><span class="kw">void</span> <span class="fn">main</span>() {
+  <span class="va">var</span> point = (<span class="num">3</span>, <span class="st">'y'</span>); <span class="cm">// Record (Dart 3+)</span>
+  <span class="kw">switch</span> (point.$1) {
+    <span class="kw">&gt;</span> <span class="num">0</span> => <span class="fn">print</span>(<span class="st">'Positive'</span>),
+    _   => <span class="fn">print</span>(<span class="st">'Non-positive'</span>),
+  }
+}</pre>
+    <div class="slide-number">03 <span>/</span> 13</div>
+  </div>
+
+  <!-- SLIDE 4: Features -->
+  <div class="slide" data-index="3">
+    <h2>🚀 Особливості Flutter</h2>
+    <div class="card-grid">
+      <div class="card">
+        <div class="icon">🔄</div>
+        <h4>Hot Reload</h4>
+        <p>Миттєве оновлення коду без перезапуску додатку та втрати стану</p>
+      </div>
+      <div class="card">
+        <div class="icon">🎨</div>
+        <h4>Власний рендерінг</h4>
+        <p>Impeller рендерить кожен піксель самостійно — однаковий вигляд на всіх платформах</p>
+      </div>
+      <div class="card">
+        <div class="icon">🧩</div>
+        <h4>Багата бібліотека віджетів</h4>
+        <p>Material 3 + Cupertino + кастомні віджети</p>
+      </div>
+      <div class="card">
+        <div class="icon">📦</div>
+        <h4>Екосистема Google</h4>
+        <p>Firebase, Cloud, Google Sign-In та інші сервіси</p>
+      </div>
+      <div class="card">
+        <div class="icon">📄</div>
+        <h4>Єдина кодова база</h4>
+        <p>Mobile + Desktop + Web з одного проекту</p>
+      </div>
+      <div class="card">
+        <div class="icon">🔒</div>
+        <h4>Null Safety</h4>
+        <p>Безпека від null-помилок на рівні компіляції (Dart 2.12+)</p>
+      </div>
+    </div>
+    <div class="update-note">ℹ️ Веб-рендерінг HTML прибрано у Flutter 3.29 — залишився лише CanvasKit. Android edge-to-edge за замовчуванням з 3.27.</div>
+    <div class="slide-number">04 <span>/</span> 13</div>
+  </div>
+
+  <!-- SLIDE 5: When NOT to use Flutter -->
+  <div class="slide" data-index="4">
+    <h2>⚠️ Коли Flutter <em>не</em> найкращий вибір</h2>
+    <div class="card-grid">
+      <div class="card" style="border-color: rgba(255,107,107,0.3);">
+        <div class="icon">🎮</div>
+        <h4>Ігри</h4>
+        <p>Flutter не має ігрового рушія. Для ігор краще Unity, Unreal або Godot.</p>
+      </div>
+      <div class="card" style="border-color: rgba(255,107,107,0.3);">
+        <div class="icon">🔊</div>
+        <h4>Аудіо застосунки</h4>
+        <p>Відсутність продвинутого звукового рушія. Для аудіо DAW обирайте нативну розробку.</p>
+      </div>
+      <div class="card" style="border-color: rgba(255,107,107,0.3);">
+        <div class="icon">🍎</div>
+        <h4>watchOS / tvOS</h4>
+        <p>Flutter не підтримує ці платформи. Потрібна нативна розробка Swift.</p>
+      </div>
+      <div class="card" style="border-color: rgba(255,107,107,0.3);">
+        <div class="icon">🔗</div>
+        <h4>Сильна залежність від Native SDK</h4>
+        <p>CloudKit, MLKit, StoreKit — можна використовувати Platform Channels, але це ускладнює розробку.</p>
+      </div>
+    </div>
+    <div class="note">Якщо ваш проєкт вимагає тільки iOS або тільки Android з глибоким використанням платформенних API — нативна розробка (Swift/Kotlin) лишається кращим вибором.</div>
+    <div class="slide-number">05 <span>/</span> 13</div>
+  </div>
+
+  <!-- SLIDE 6: Architecture -->
+  <div class="slide" data-index="5">
+    <h2>🏗️ Архітектура Flutter</h2>
+    <div class="two-col">
+      <div>
+        <div class="arch">
+          <div class="layer framework">Framework (Dart)
+            <span style="display:block;font-weight:400;font-size:0.8rem;opacity:0.7">Material, Cupertino, Widgets, Rendering</span>
+          </div>
+          <div class="arrow">⬇</div>
+          <div class="layer engine">Engine (C++)
+            <span style="display:block;font-weight:400;font-size:0.8rem;opacity:0.7">Impeller, Skia, Text, Dart VM</span>
+          </div>
+          <div class="arrow">⬇</div>
+          <div class="layer embedder">Embedder (Platform-specific)
+            <span style="display:block;font-weight:400;font-size:0.8rem;opacity:0.7">Android, iOS, macOS, Windows, Linux, Web</span>
+          </div>
+        </div>
+      </div>
+      <div>
+        <h3>Рівні</h3>
+        <ul>
+          <li><strong>Framework</strong> — бібліотеки Dart високого рівня (віджети, анімація, жести)</li>
+          <li><strong>Engine</strong> — базові бібліотеки C++ (рендерінг, текст, введення/виведення)</li>
+          <li><strong>Embedder</strong> — платформо-специфічний код для кожної ОС</li>
+        </ul>
+        <div class="update-note" style="margin-top:1rem">⚡ Рушій Impeller забезпечує швидший та стабільніший рендерінг, ніж Skia, особливо на Android. На iOS Skia повністю видалено з Flutter 3.29.</div>
+      </div>
+    </div>
+    <div class="slide-number">06 <span>/</span> 13</div>
+  </div>
+
+  <!-- SLIDE 7: How Flutter app starts -->
+  <div class="slide" data-index="6">
+    <h2>▶️ Як запускається Flutter застосунок</h2>
+    <div class="two-col">
+      <div>
+        <pre><span class="kw">import</span> <span class="st">'package:flutter/material.dart'</span>;
+
+<span class="kw">void</span> <span class="fn">main</span>() {
+  <span class="fn">runApp</span>(
+    <span class="kw">const</span> <span class="tp">MaterialApp</span>(
+      home: <span class="tp">Scaffold</span>(
+        body: <span class="tp">Center</span>(
+          child: <span class="tp">Text</span>(<span class="st">'Hello World'</span>),
+        ),
+      ),
+    ),
+  );
+}</pre>
+        <div class="note"><strong>const</strong> — створює віджет на етапі компіляції, зменшуючи використання пам'яті. Додавайте const скрізь, де можливо.</div>
+      </div>
+      <div>
+        <h3>Порядок виконання</h3>
+        <ul>
+          <li><code>main()</code> — точка входу, виконується автоматично</li>
+          <li><code>runApp()</code> — приймає кореневий віджет та рендерить його</li>
+          <li><code>MaterialApp</code> — обгортка Material Design (тема, навігація)</li>
+          <li><code>Scaffold</code> — базова структура екрану (AppBar, body, drawer)</li>
+        </ul>
+        <h3 style="margin-top:1.5rem">🌳 Дерево віджетів</h3>
+        <div class="tree">
+MaterialApp<br>
+&nbsp;&nbsp;└── Scaffold<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└── Center<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└── Text("Hello World")
+        </div>
+        <div class="update-note">ℹ️ Material 3 — стандарт з Flutter 3.16. <code>useMaterial3: true</code> більше не потрібен.</div>
+      </div>
+    </div>
+    <div class="slide-number">07 <span>/</span> 13</div>
+  </div>
+
+  <!-- SLIDE 8: Widgets -->
+  <div class="slide" data-index="7">
+    <h2>🧱 Віджети (Widgets)</h2>
+    <div class="two-col">
+      <div>
+        <p>Віджет — це будівельний блок інтерфейсу користувача. Віджети вкладаються один в одного, утворюючи <strong>дерево віджетів</strong>.</p>
+        <ul>
+          <li>Все у Flutter — віджет</li>
+          <li>Віджети описують конфігурацію, а не сам елемент на екрані</li>
+          <li>Flutter сам оптимізує рендерінг — ви лише описуєте <em>що</em> показати</li>
+        </ul>
+        <div class="note">🎯 Аналогія: віджети — як деталі Lego. З простих блоків збираються складні інтерфейси.</div>
+      </div>
+      <div>
+        <h3>Статичні та динамічні віджети</h3>
+        <ul>
+          <li><strong>StatelessWidget</strong> — незмінний. Не може оновлюватися після створення.</li>
+          <li><strong>StatefulWidget</strong> — може змінювати стан через <code>setState()</code>.</li>
+        </ul>
+        <pre><span class="kw">class</span> <span class="tp">MyWidget</span> <span class="kw">extends</span> <span class="tp">StatelessWidget</span> {
+  <span class="kw">const</span> <span class="fn">MyWidget</span>({<span class="kw">super</span>.key});
+
+  <span class="tp">@override</span>
+  <span class="tp">Widget</span> <span class="fn">build</span>(<span class="tp">BuildContext</span> context) {
+    <span class="kw">return</span> <span class="kw">const</span> <span class="tp">Text</span>(<span class="st">'Hello!'</span>);
+  }
+}</pre>
+      </div>
+    </div>
+    <div class="slide-number">08 <span>/</span> 13</div>
+  </div>
+
+  <!-- SLIDE 9: Popular widgets -->
+  <div class="slide" data-index="8">
+    <h2>📦 Популярні віджети</h2>
+    <div class="card-grid">
+      <div class="card">
+        <div class="icon">📐</div>
+        <h4>Container</h4>
+        <p>Стилізує, прикрашає та позиціонує дочірній віджет. BoxDecoration, padding, margin.</p>
+      </div>
+      <div class="card">
+        <div class="icon">📊</div>
+        <h4>Column / Row</h4>
+        <p>Розташовує віджети вертикально (Column) або горизонтально (Row).</p>
+      </div>
+      <div class="card">
+        <div class="icon">📏</div>
+        <h4>Expanded</h4>
+        <p>Заповнює доступний простір у Flex-контейнері (Column, Row).</p>
+      </div>
+      <div class="card">
+        <div class="icon">🥞</div>
+        <h4>Stack + Positioned</h4>
+        <p>Розміщує віджети один на одному. Positioned керує позицією всередині Stack.</p>
+      </div>
+      <div class="card">
+        <div class="icon">🖼️</div>
+        <h4>Image</h4>
+        <p>Відображає зображення: <code>Image.asset()</code>, <code>Image.network()</code>, <code>Image.file()</code>.</p>
+      </div>
+      <div class="card">
+        <div class="icon">🔘</div>
+        <h4>FilledButton / TextButton</h4>
+        <p>Кнопки. У Material 3 <code>FilledButton</code> — основний стиль.</p>
+      </div>
+    </div>
+    <div class="slide-number">09 <span>/</span> 13</div>
+  </div>
+
+  <!-- SLIDE 10: Three trees -->
+  <div class="slide" data-index="9">
+    <h2>🌳🌳🌳 3 дерева Flutter</h2>
+    <p>Flutter підтримує три паралельні дерева для оптимізації рендерінгу:</p>
+    <div class="card-grid">
+      <div class="card">
+        <div class="icon">⚙️</div>
+        <h4>Widget Tree</h4>
+        <p><strong>Конфігурація</strong><br>Зберігає опис UI. Легке, може перебудовуватися часто. Те, з чим ви працюєте безпосередньо.</p>
+      </div>
+      <div class="card">
+        <div class="icon">🔄</div>
+        <h4>Element Tree</h4>
+        <p><strong>Життєвий цикл</strong><br>Керує зв'язком між Widget та RenderObject. Відповідає за mount/unmount, ключі.</p>
+      </div>
+      <div class="card">
+        <div class="icon">🎨</div>
+        <h4>Render Tree</h4>
+        <p><strong>Рендерінг</strong><br>Відповідає за розмір, позицію та малювання. Важке дерево — змінюється рідко.</p>
+      </div>
+    </div>
+    <div class="note">Розуміння трьох дерев не обов'язкове для початку, але допомагає зрозуміти, чому Flutter швидкий: часті зміни у Widget Tree не викликають перерендерінг Render Tree.</div>
+    <div class="slide-number">10 <span>/</span> 13</div>
+  </div>
+
+  <!-- SLIDE 11: Platform tools -->
+  <div class="slide" data-index="10">
+    <h2>🛠️ Інструменти та налаштування <span class="badge">оновлено 2026</span></h2>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th></th>
+            <th>Windows</th>
+            <th>macOS</th>
+            <th>Linux</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>iOS розробка</strong></td>
+            <td style="color:var(--danger)">❌ неможлива</td>
+            <td>✅ Xcode (остання версія)<br>✅ Xcode Command Line Tools<br>✅ Swift Package Manager (з Flutter 3.44)<br>✅ iOS Simulator</td>
+            <td style="color:var(--danger)">❌ неможлива</td>
+          </tr>
+          <tr>
+            <td><strong>Android розробка</strong></td>
+            <td>✅ Android Studio<br>✅ SDK, CLI tools, Build tools<br>✅ Android Emulator</td>
+            <td>✅ Android Studio<br>✅ SDK, CLI tools, Build tools<br>✅ Android Emulator</td>
+            <td>✅ Android Studio<br>✅ SDK, CLI tools, Build tools<br>✅ Android Emulator</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="comparison" style="margin-top:1rem">
+      <div class="col old">
+        <h4>Застаріле</h4>
+        <ul>
+          <li>CocoaPods для iOS/macOS</li>
+          <li>Groovy <code>apply</code> для Gradle</li>
+          <li>Android Embedding v1 (Java)</li>
+          <li>AppDelegate lifecycle</li>
+        </ul>
+      </div>
+      <div class="col new">
+        <h4>Актуальне (2026)</h4>
+        <ul>
+          <li>Swift Package Manager (default)</li>
+          <li>Declarative Kotlin <code>plugins {}</code></li>
+          <li>Android Embedding v2 (Kotlin)</li>
+          <li>UIScene lifecycle</li>
+        </ul>
+      </div>
+    </div>
+    <div class="slide-number">11 <span>/</span> 13</div>
+  </div>
+
+  <!-- SLIDE 12: Data types -->
+  <div class="slide" data-index="11">
+    <h2>📊 Типи даних Dart</h2>
+    <div class="two-col">
+      <div>
+        <p>Dart — строго типізована мова. Кожне значення — об'єкт, що успадковує <code>Object</code>.</p>
+        <h3>Ієрархія типів</h3>
+        <div class="tree">
+<span class="highlight">Object?</span> (верхній тип, може бути null)<br>
+&nbsp;└── <span class="highlight">Object</span> (базовий клас для всього)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── <span class="highlight">num</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp; ├── int<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp; └── double<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── String<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── bool<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└── Widget (Flutter)<br><br>
+<span class="highlight">Never</span> (нижній тип — ніколи не має значення)
+        </div>
+      </div>
+      <div>
+        <h3>Приклади</h3>
+        <pre><span class="num">15</span> → <span class="tp">int</span> → <span class="tp">num</span> → <span class="tp">Object</span>
+<span class="st">'Hello'</span> → <span class="tp">String</span> → <span class="tp">Object</span>
+<span class="tp">MaterialApp</span> → <span class="tp">Widget</span> → <span class="tp">Object</span>
+<span class="kw">null</span> → <span class="tp">Null</span> → <span class="tp">Object?</span></pre>
+        <div class="update-note" style="margin-top:0.5rem">🔧 Dart 3.2+: приватні final поля можуть бути типізовано підвищені (private field promotion).</div>
+        <div class="note" style="margin-top:0.75rem">В Dart 3+ верхній тип — <code>Object?</code> (а не <code>Object</code>), а нижній — <code>Never</code>. Це відрізняється від багатьох інших мов.</div>
+      </div>
+    </div>
+    <div class="slide-number">12 <span>/</span> 13</div>
+  </div>
+
+  <!-- SLIDE 13: Variables -->
+  <div class="slide" data-index="12">
+    <h2>📝 Змінні в Dart</h2>
+    <div class="two-col">
+      <div>
+        <div class="table-wrap">
+          <table class="var-table">
+            <thead>
+              <tr>
+                <th>Ключове слово</th>
+                <th>Змінна?</th>
+                <th>Коли визначається</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>var</code> / тип</td>
+                <td>✅ Так</td>
+                <td>Runtime</td>
+              </tr>
+              <tr>
+                <td><code>final</code></td>
+                <td>❔ Одне призначення</td>
+                <td>Runtime</td>
+              </tr>
+              <tr>
+                <td><code>const</code></td>
+                <td>❌ Ні</td>
+                <td>Compile time</td>
+              </tr>
+              <tr>
+                <td><code>late</code></td>
+                <td>❔ Одне призначення</td>
+                <td>Runtime (відкладено)</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="note" style="margin-top:0.5rem">💡 <strong>Правило:</strong> const > final > var. Використовуйте найбільш обмежений варіант.</div>
+      </div>
+      <div>
+        <pre><span class="va">var</span> name = <span class="st">'Bob'</span>;            <span class="cm">// автоматична типізація → String</span>
+<span class="tp">String</span> name = <span class="st">'Bob'</span>;        <span class="cm">// явна типізація</span>
+<span class="tp">String</span>? nullableName;        <span class="cm">// може бути null (null safety)</span>
+<span class="kw">final</span> name = <span class="st">'Bob'</span>;          <span class="cm">// runtime-константа</span>
+<span class="kw">const</span> bar = <span class="num">1000000</span>;         <span class="cm">// compile-time константа</span>
+<span class="kw">late</span> <span class="kw">final</span> <span class="tp">String</span> label;      <span class="cm">// ініціалізація при першому доступі</span>
+
+<span class="cm">// Dart 3.2+: private field promotion</span>
+<span class="kw">class</span> <span class="tp">Example</span> {
+  <span class="kw">final</span> <span class="tp">String</span> <span class="pr">_name</span>;  <span class="cm">// може бути promoted як public</span>
+  
+  <span class="tp">@override</span>
+  <span class="tp">String</span> <span class="fn">toString</span>() => <span class="pr">_name</span>.toUpperCase();
+}</pre>
+      </div>
+    </div>
+    <div class="slide-number">13 <span>/</span> 13</div>
+  </div>
+
+</div>
+
+<!-- Navigation -->
+<div class="nav" id="nav">
+  <button onclick="goSlide(current - 1)" id="prevBtn" title="Попередній слайд">◀</button>
+  <div class="dots" id="dots"></div>
+  <div class="slide-counter" id="counter">1 / 13</div>
+  <button onclick="goSlide(current + 1)" id="nextBtn" title="Наступний слайд">▶</button>
+</div>
+
+<div class="key-hint">← → для навігації · Esc для перегляду всіх</div>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  const total = slides.length;
+  let current = 0;
+  let isAnimating = false;
+
+  // Create dots
+  const dotsContainer = document.getElementById('dots');
+  for (let i = 0; i < total; i++) {
+    const dot = document.createElement('button');
+    dot.className = 'dot-nav' + (i === 0 ? ' active' : '');
+    dot.onclick = () => goSlide(i);
+    dotsContainer.appendChild(dot);
+  }
+
+  function goSlide(index) {
+    if (isAnimating) return;
+    if (index < 0 || index >= total) return;
+    if (index === current) return;
+
+    isAnimating = true;
+
+    const old = slides[current];
+    const next = slides[index];
+
+    old.classList.remove('active');
+    old.classList.add('exit');
+    next.classList.remove('exit');
+    next.classList.add('active');
+
+    current = index;
+
+    // Update dots
+    document.querySelectorAll('.dot-nav').forEach((d, i) => {
+      d.classList.toggle('active', i === current);
+    });
+
+    document.getElementById('counter').textContent = (current + 1) + ' / ' + total;
+
+    setTimeout(() => {
+      old.classList.remove('exit');
+      isAnimating = false;
+    }, 500);
+  }
+
+  // Keyboard
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') {
+      e.preventDefault();
+      goSlide(current + 1);
+    } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+      e.preventDefault();
+      goSlide(current - 1);
+    } else if (e.key === 'Home') {
+      e.preventDefault();
+      goSlide(0);
+    } else if (e.key === 'End') {
+      e.preventDefault();
+      goSlide(total - 1);
+    }
+  });
+
+  // Touch support
+  let touchStartX = 0;
+  document.addEventListener('touchstart', (e) => {
+    touchStartX = e.changedTouches[0].screenX;
+  });
+  document.addEventListener('touchend', (e) => {
+    const diff = touchStartX - e.changedTouches[0].screenX;
+    if (Math.abs(diff) > 50) {
+      goSlide(current + (diff > 0 ? 1 : -1));
+    }
+  });
+
+  // Fullscreen on double click
+  document.addEventListener('dblclick', () => {
+    if (!document.fullscreenElement) {
+      document.body.requestFullscreen();
+    } else {
+      document.exitFullscreen();
+    }
+  });
+</script>
+
+</body>
+</html>
