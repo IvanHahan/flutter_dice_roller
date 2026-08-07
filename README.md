@@ -33,12 +33,12 @@ Either editor works; VS Code has the most popular Flutter extension.
 Xcode is required to build and run iOS apps, and to use the iOS Simulator.
 
 - Install from the Mac App Store: https://apps.apple.com/us/app/xcode/id497799835
-- Accept the license and install the command-line tools:
+- Accept the license and point the toolchain at Xcode:
   ```bash
   sudo xcodebuild -license accept
   sudo xcode-select --switch /Applications/Xcode.app/Contents/Developer
-  xcode-select --install
   ```
+  (Command-line tools are included with the App Store version, so `xcode-select --install` is not needed.)
 
 To open the iOS Simulator once Xcode is ready:
 
